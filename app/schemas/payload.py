@@ -20,6 +20,7 @@ class PayloadCreateRequestDTO(MutableDTO):
 
 class PayloadCreateResponseDTO(ImmutableDTO):
     id: UUID
+    result: str
 
 
 class PayloadDTO(ImmutableDTO):
@@ -28,4 +29,4 @@ class PayloadDTO(ImmutableDTO):
     list_2: List[str]
     result: str
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None

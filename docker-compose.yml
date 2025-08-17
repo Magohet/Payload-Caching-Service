@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    networks:
+      - local-network
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file: .env
+    ports: [ "8000:8000" ]
+    volumes:
+      - ./:/opt
+    networks:
+      - local-network
+    depends_on:
+      - db
+
+
+volumes:
+  db_volume:
+
+networks:
+  local-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: "1450"
