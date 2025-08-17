@@ -2,7 +2,11 @@ from uuid import UUID
 
 from fastapi import APIRouter
 
+from app.schemas import PayloadDTO, PayloadCreateResponseDTO, PayloadCreateRequestDTO
+from app.services import PayloadServiceDeps
+
 __all__ = ["router"]
+
 router = APIRouter(tags=["payload"], prefix="/payload")
 
 
@@ -11,11 +15,11 @@ async def healthcheck():
     return {"status": "ok"}
 
 
-@router.get("/payload/{payload_id}")  # ToDo: add dependencies + request/response model
-async def get_payload(payload_id: UUID):
-    return {"status": "ok"}
+@router.get("/{payload_id}", response_model=PayloadDTO)
+async def get_payload(payload_id: UUID, service: PayloadServiceDeps):
+    return await service.get_payload_by_id(payload_id)
 
 
-@router.post("/payload")  # ToDo: add dependencies + request/response model
-async def create_payload():
-    return {"status": "ok"}
+@router.post("/", response_model=PayloadCreateResponseDTO)
+async def create_payload(payload_data: PayloadCreateRequestDTO, service: PayloadServiceDeps):
+    return await service.create_payload(payload_data)
