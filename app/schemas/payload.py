@@ -2,6 +2,8 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
+from pydantic import StrictStr
+
 from core.types import ImmutableDTO, MutableDTO
 
 __all__ = ["PayloadCreateDTO", "PayloadCreateRequestDTO", "PayloadCreateResponseDTO", "PayloadDTO"]
@@ -14,8 +16,8 @@ class PayloadCreateDTO(MutableDTO):
 
 
 class PayloadCreateRequestDTO(MutableDTO):
-    list_1: List[str]
-    list_2: List[str]
+    list_1: List[StrictStr]
+    list_2: List[StrictStr]
 
 
 class PayloadCreateResponseDTO(ImmutableDTO):
