@@ -31,7 +31,7 @@ class PayloadSQLRepository(SQLAlchemyRepository):
                 f"{Payload.__tablename__} conflicts with existing data.",
             )
         except Exception as e:
-            raise UnknownException(f"Unknown error occurred: {e}") from e
+            raise UnknownException(f"Unknown error occurred: {e}")
 
     async def get_payload_by_id(
             self, payload_id: UUID
@@ -40,7 +40,7 @@ class PayloadSQLRepository(SQLAlchemyRepository):
         result = await self._session.execute(query)
         visit = result.scalar_one_or_none()
         if not visit:
-            raise NotFoundException
+            raise NotFoundException(f"Resource {payload_id} not found")
         return visit
 
     async def get_payload_by_lists(
