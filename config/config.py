@@ -5,6 +5,8 @@ from pydantic import PositiveInt
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from core.db import Base
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -25,6 +27,7 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
 async_database_engine = create_async_engine(
     url=settings.POSTGRES_DSN,
     json_deserializer=loads,
@@ -33,6 +36,13 @@ async_database_engine = create_async_engine(
     max_overflow=10,
     pool_size=50,
 )
+
 async_session_maker = async_sessionmaker(
     bind=async_database_engine, expire_on_commit=False, class_=AsyncSession
 )
+
+
+async def init_db():
+    async with async_database_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("Tables are already created!")

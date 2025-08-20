@@ -1,4 +1,4 @@
-from typing import List, Annotated
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import Depends
@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories import PayloadSQLRepository
 from app.schemas import PayloadDTO, PayloadCreateRequestDTO, PayloadCreateDTO, PayloadCreateResponseDTO
-
-__all__ = ["PayloadService", "PayloadServiceDeps"]
-
+from app.services import ExternalService
 from core.deps import DBSession
+
+__all__ = ["PayloadService", "PayloadServiceDeps", "get_payload_service"]
 
 
 class PayloadService:
@@ -17,21 +17,16 @@ class PayloadService:
             self,
             session: AsyncSession,
             repository: PayloadSQLRepository,
+            external_service: ExternalService,
     ):
         self.session = session
         self.repository = repository
-
-    def some_function(self, list_1: List[str], list_2: List[str]) -> str:
-        result = []
-        for a, b in zip(list_1, list_2):
-            result.extend([a, b])
-
-        return str(result)
+        self.external_service = external_service
 
     async def create_payload(self, request_data: PayloadCreateRequestDTO) -> PayloadCreateResponseDTO:
         payload = await self.repository.get_payload_by_lists(request_data.list_1, request_data.list_2)
         if not payload:
-            result = self.some_function(request_data.list_1, request_data.list_2)
+            result = await self.external_service.transform(request_data.list_1, request_data.list_2)
 
             payload_data = PayloadCreateDTO(
                 list_1=request_data.list_1,
@@ -57,7 +52,8 @@ class PayloadService:
 
 def get_payload_service(session: DBSession) -> PayloadService:
     repository = PayloadSQLRepository(session)
-    return PayloadService(session=session, repository=repository)
+    external_service = ExternalService()
+    return PayloadService(session=session, repository=repository, external_service=external_service)
 
 
 PayloadServiceDeps = Annotated[PayloadService, Depends(dependency=get_payload_service)]
