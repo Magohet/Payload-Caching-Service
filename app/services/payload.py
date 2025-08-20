@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories import PayloadSQLRepository
 from app.schemas import PayloadDTO, PayloadCreateRequestDTO, PayloadCreateDTO, PayloadCreateResponseDTO
-from app.services import ExternalService
+from app.services.external_service import ExternalService
 from core.deps import DBSession
 
 __all__ = ["PayloadService", "PayloadServiceDeps", "get_payload_service"]
