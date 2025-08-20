@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Annotated
+from typing import Annotated, List
 
 from fastapi import Depends
 
@@ -9,14 +9,9 @@ __all__ = ["ExternalService", "PayloadServiceDeps", "get_external_service"]
 class ExternalService:
 
     @staticmethod
-    async def transform(list_1: List[str], list_2: List[str]) -> str:
-        result = []
-        for a, b in zip(list_1, list_2):
-            result.extend([a, b])
-
-        await asyncio.sleep(0.1)
-
-        return str(result)
+    async def transform(input_list: List[str]) -> List[str]:
+        await asyncio.sleep(0.1)    # simulating external service request
+        return [el.upper() for el in input_list]
 
 
 def get_external_service() -> ExternalService:

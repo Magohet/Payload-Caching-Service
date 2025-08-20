@@ -25,13 +25,19 @@ class PayloadService:
 
     async def create_payload(self, request_data: PayloadCreateRequestDTO) -> PayloadCreateResponseDTO:
         payload = await self.repository.get_payload_by_lists(request_data.list_1, request_data.list_2)
+
         if not payload:
-            result = await self.external_service.transform(request_data.list_1, request_data.list_2)
+            transformed_list_1 = await self.external_service.transform(request_data.list_1)
+            transformed_list_2 = await self.external_service.transform(request_data.list_2)
+
+            result = []
+            for a, b in zip(transformed_list_1, transformed_list_2):
+                result.extend([a, b])
 
             payload_data = PayloadCreateDTO(
                 list_1=request_data.list_1,
                 list_2=request_data.list_2,
-                result=result,
+                result=str(result),
             )
 
             payload = await self.repository.create_payload(payload_data)
