@@ -9,11 +9,11 @@ Previously processed inputs are cached, so the service does not recompute the sa
 
 - **POST /payload**  
   Accepts two lists of strings (`list_1`, `list_2`), transforms them (without sorting), interleaves results, and stores them in DB.  
-  Returns a unique payload ID.  
-  If the same lists were already processed, the cached result is returned.
+  Returns a unique payload ID and a result.  
+  If the same lists were already processed, the cached result and id are returned.
 
 - **GET /payload/{id}**
-  Returns the transformed and interleaved result by payload ID.  
+  Returns the transformed and interleaved result by payload ID with some meta info.  
   If not found, returns `404`.
 
 - **Caching**  
